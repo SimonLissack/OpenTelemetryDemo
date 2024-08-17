@@ -1,6 +1,8 @@
-﻿namespace OpenTelemetryDemo.Domain.Abstractions;
+﻿using MediatR;
 
-public interface IEvent
+namespace OpenTelemetryDemo.Domain.Abstractions;
+
+public interface IEvent : INotification
 {
     public Guid Id { get; set; }
     public Guid CausationId { get; set; }

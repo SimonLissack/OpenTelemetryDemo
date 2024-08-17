@@ -17,7 +17,7 @@ public class TrafficLightEventHandler :
         _repository = repository;
     }
 
-    public async Task HandleAsync(TrafficLightAdded @event, CancellationToken cancellationToken)
+    public async Task Handle(TrafficLightAdded @event, CancellationToken cancellationToken)
     {
         var trafficLight = new TrafficLight
         {
@@ -28,12 +28,12 @@ public class TrafficLightEventHandler :
         await _repository.AddOrUpdateAsync(@event.TrafficLightName, trafficLight, cancellationToken);
     }
 
-    public async Task HandleAsync(TrafficLightRemoved @event, CancellationToken cancellationToken)
+    public async Task Handle(TrafficLightRemoved @event, CancellationToken cancellationToken)
     {
         await _repository.RemoveAsync(@event.TrafficLightName, cancellationToken);
     }
 
-    public async Task HandleAsync(TrafficLightTransitioned @event, CancellationToken cancellationToken)
+    public async Task Handle(TrafficLightTransitioned @event, CancellationToken cancellationToken)
     {
         var trafficLight = await _repository.FindAsync(@event.TrafficLightName, cancellationToken);
 
@@ -42,7 +42,7 @@ public class TrafficLightEventHandler :
         await _repository.AddOrUpdateAsync(@event.TrafficLightName, trafficLight, cancellationToken);
     }
 
-    public async Task HandleAsync(TrafficLightQueuedTrafficChanged @event, CancellationToken cancellationToken)
+    public async Task Handle(TrafficLightQueuedTrafficChanged @event, CancellationToken cancellationToken)
     {
         var trafficLight = await _repository.FindAsync(@event.TrafficLightName, cancellationToken);
 

@@ -1,6 +1,7 @@
-﻿namespace OpenTelemetryDemo.Domain.Abstractions;
+﻿using MediatR;
 
-public interface ICommandHandler<in T> where T : ICommand
+namespace OpenTelemetryDemo.Domain.Abstractions;
+
+public interface ICommandHandler<in T> : IRequestHandler<T> where T : ICommand
 {
-    public Task Handle(T command, CancellationToken cancellationToken);
 }

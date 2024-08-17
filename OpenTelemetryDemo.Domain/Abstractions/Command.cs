@@ -1,6 +1,8 @@
-﻿namespace OpenTelemetryDemo.Domain.Abstractions;
+﻿using MediatR;
 
-public interface ICommand
+namespace OpenTelemetryDemo.Domain.Abstractions;
+
+public interface ICommand : IRequest
 {
     public Guid Id { get; set; }
     public Guid CausationId { get; set; }
