@@ -67,6 +67,11 @@ public class TrafficLightCommandHandler :
 
     public async Task Handle(AddArrivingTraffic command, CancellationToken cancellationToken)
     {
+        if (command.TrafficArrived <= 0)
+        {
+            return;
+        }
+
         var trafficLight = await GetTrafficLight(command.TrafficLightName, cancellationToken);
 
         var trafficCount = trafficLight.QueuedTraffic + command.TrafficArrived;
@@ -81,6 +86,11 @@ public class TrafficLightCommandHandler :
 
     public async Task Handle(RemoveLeavingTraffic command, CancellationToken cancellationToken)
     {
+        if (command.TrafficLeaving <= 0)
+        {
+            return;
+        }
+
         var trafficLight = await GetTrafficLight(command.TrafficLightName, cancellationToken);
 
         var trafficCount = trafficLight.QueuedTraffic - command.TrafficLeaving;
