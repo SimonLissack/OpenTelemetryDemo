@@ -38,6 +38,7 @@ public class TrafficLightEventHandler :
         var trafficLight = await _repository.FindAsync(@event.TrafficLightName, cancellationToken);
 
         trafficLight!.LightState = @event.TrafficLightState;
+        trafficLight.LastTransition = DateTime.Now;
 
         await _repository.AddOrUpdateAsync(@event.TrafficLightName, trafficLight, cancellationToken);
     }
