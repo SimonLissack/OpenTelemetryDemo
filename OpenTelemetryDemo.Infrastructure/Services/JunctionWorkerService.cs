@@ -9,7 +9,9 @@ namespace OpenTelemetryDemo.Infrastructure.Services;
 public class JunctionWorkerService(IServiceScopeFactory scopeFactory) : BackgroundService
 {
     readonly TimeSpan _tickInterval = TimeSpan.FromSeconds(1);
+    readonly Random _random = new();
     const int GreenLightTicks = 10;
+    const int DeparturesPerTick = 10;
     const string Name = "Junction";
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -61,10 +63,10 @@ public class JunctionWorkerService(IServiceScopeFactory scopeFactory) : Backgrou
     async Task<JunctionState> CreateJunction(CancellationToken cancellationToken)
     {
         var state = new JunctionState();
-        state.AddTrafficLight("north", 5, 20);
-        state.AddTrafficLight("east", 3, 2);
-        state.AddTrafficLight("south", 2, 2);
-        state.AddTrafficLight("west", 6, 100);
+        state.AddTrafficLight("north", 5, DeparturesPerTick);
+        state.AddTrafficLight("east", 3, DeparturesPerTick);
+        state.AddTrafficLight("south", 2, DeparturesPerTick);
+        state.AddTrafficLight("west", 6, DeparturesPerTick);
 
         await using var createScope = scopeFactory.CreateAsyncScope();
         var commandDispatcher = createScope.ServiceProvider.GetRequiredService<ICommandDispatcher>();
@@ -95,7 +97,7 @@ public class JunctionWorkerService(IServiceScopeFactory scopeFactory) : Backgrou
             {
                 TrafficLightName = t.Name,
                 RaisedBy = Name,
-                TrafficArrived = t.ArrivalsPerTick
+                TrafficArrived = _random.Next(0, t.ArrivalsPerTick)
             }, cancellationToken)
         );
 
