@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTelemetryDemo.Console", "OpenTelemetryDemo.Console\OpenTelemetryDemo.Console.csproj", "{5E8F646B-6822-461D-AE1C-07DA2D2FE551}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTelemetryDemo.Cli", "OpenTelemetryDemo.Cli\OpenTelemetryDemo.Cli.csproj", "{5E8F646B-6822-461D-AE1C-07DA2D2FE551}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTelemetryDemo.Domain", "OpenTelemetryDemo.Domain\OpenTelemetryDemo.Domain.csproj", "{D24C09C6-BC65-4458-BFA2-CE9A2237D350}"
 EndProject

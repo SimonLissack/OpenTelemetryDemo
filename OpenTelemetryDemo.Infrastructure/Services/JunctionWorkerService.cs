@@ -34,6 +34,15 @@ public class JunctionWorkerService(IServiceScopeFactory scopeFactory) : Backgrou
 
                 for (var i = 0; i < GreenLightTicks; i++)
                 {
+                    await commandDispatcher.DispatchAsync(
+                        new RemoveLeavingTraffic
+                        {
+                            TrafficLightName = trafficLight.Name,
+                            TrafficLeaving = trafficLight.DeparturesPerTick,
+                            RaisedBy = Name
+                        },
+                        stoppingToken
+                    );
                     await Tick(state, stoppingToken);
                 }
 
@@ -52,10 +61,10 @@ public class JunctionWorkerService(IServiceScopeFactory scopeFactory) : Backgrou
     async Task<JunctionState> CreateJunction(CancellationToken cancellationToken)
     {
         var state = new JunctionState();
-        state.AddTrafficLight("north", 5, 6);
-        state.AddTrafficLight("east", 3, 1);
+        state.AddTrafficLight("north", 5, 20);
+        state.AddTrafficLight("east", 3, 2);
         state.AddTrafficLight("south", 2, 2);
-        state.AddTrafficLight("west", 6, 10);
+        state.AddTrafficLight("west", 6, 100);
 
         await using var createScope = scopeFactory.CreateAsyncScope();
         var commandDispatcher = createScope.ServiceProvider.GetRequiredService<ICommandDispatcher>();
