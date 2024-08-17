@@ -4,12 +4,13 @@ using OpenTelemetryDemo.Cli.Services;
 using OpenTelemetryDemo.Infrastructure.DependencyInjection;
 using OpenTelemetryDemo.Infrastructure.Services;
 
-var hostBuilder = Host.CreateApplicationBuilder(args);
+var hostBuilder = Host.CreateDefaultBuilder(args);
 
-hostBuilder.Services
+hostBuilder.ConfigureServices(s => s
     .AddHosting()
     .AddHostedService<JunctionWorkerService>()
-    .AddHostedService<RenderService>();
+    .AddHostedService<LogRenderService>()
+);
 
 var cts = new CancellationTokenSource();
 
