@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTelemetryDemo.Console", "OpenTelemetryDemo.Console\OpenTelemetryDemo.Console.csproj", "{5E8F646B-6822-461D-AE1C-07DA2D2FE551}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTelemetryDemo.Domain", "OpenTelemetryDemo.Domain\OpenTelemetryDemo.Domain.csproj", "{D24C09C6-BC65-4458-BFA2-CE9A2237D350}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5E8F646B-6822-461D-AE1C-07DA2D2FE551}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E8F646B-6822-461D-AE1C-07DA2D2FE551}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E8F646B-6822-461D-AE1C-07DA2D2FE551}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E8F646B-6822-461D-AE1C-07DA2D2FE551}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D24C09C6-BC65-4458-BFA2-CE9A2237D350}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D24C09C6-BC65-4458-BFA2-CE9A2237D350}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D24C09C6-BC65-4458-BFA2-CE9A2237D350}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D24C09C6-BC65-4458-BFA2-CE9A2237D350}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
