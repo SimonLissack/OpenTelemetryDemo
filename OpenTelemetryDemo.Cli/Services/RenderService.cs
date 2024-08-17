@@ -9,7 +9,6 @@ public class RenderService(IRepository<TrafficLight> repository) : BackgroundSer
     readonly TimeSpan _sleepTimer = TimeSpan.FromSeconds(1);
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-
         while (!stoppingToken.IsCancellationRequested)
         {
             await Render(stoppingToken);
