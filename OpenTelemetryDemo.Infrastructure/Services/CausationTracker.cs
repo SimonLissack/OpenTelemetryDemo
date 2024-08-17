@@ -7,6 +7,8 @@ public class CausationTracker
     readonly Guid _correlationId;
     Guid _currentCausationId;
 
+    public Guid CorrelationId => _correlationId;
+
     public CausationTracker()
     {
         _correlationId = Guid.NewGuid();

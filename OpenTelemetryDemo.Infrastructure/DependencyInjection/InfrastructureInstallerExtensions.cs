@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetryDemo.Domain.Abstractions;
 using OpenTelemetryDemo.Domain.TrafficLights.Models;
+using OpenTelemetryDemo.Infrastructure.Instrumentation.Metrics;
 using OpenTelemetryDemo.Infrastructure.Services;
 using OpenTelemetryDemo.Infrastructure.Services.InMemory;
 
@@ -22,7 +23,8 @@ public static class InfrastructureInstallerExtensions
                     infrastructureAssembly,
                     domainAssembly
                 )
-            );
+            )
+            .AddMetricsInstrumentation();
 
         return services;
     }
@@ -33,6 +35,15 @@ public static class InfrastructureInstallerExtensions
             .AddScoped<CausationTracker>()
             .AddScoped<ICommandDispatcher, InMemoryCommandDispatcher>()
             .AddScoped<IEventDispatcher, InMemoryEventDispatcher>();
+
+        return services;
+    }
+
+    static IServiceCollection AddMetricsInstrumentation(this IServiceCollection services)
+    {
+        services
+            .AddMetrics()
+            .AddSingleton<MessagingMetrics>();
 
         return services;
     }

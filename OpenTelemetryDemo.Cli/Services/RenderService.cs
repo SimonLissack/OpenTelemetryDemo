@@ -19,6 +19,9 @@ public class RenderService(IRepository<TrafficLight> repository) : BackgroundSer
     async Task Render(CancellationToken cancellationToken)
     {
         Console.Clear();
+
+        Console.WriteLine($"Process id: {Environment.ProcessId}");
+
         await foreach (var trafficLight in repository.GetAllAsync(cancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
