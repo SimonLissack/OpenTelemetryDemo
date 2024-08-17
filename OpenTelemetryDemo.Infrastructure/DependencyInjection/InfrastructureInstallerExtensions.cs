@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.Metrics;
 using OpenTelemetryDemo.Domain.Abstractions;
 using OpenTelemetryDemo.Domain.TrafficLights.Models;
 using OpenTelemetryDemo.Infrastructure.Instrumentation.Metrics;
@@ -13,15 +14,13 @@ public static class InfrastructureInstallerExtensions
     public static IServiceCollection AddHosting(this IServiceCollection services)
     {
         var infrastructureAssembly = Assembly.GetAssembly(typeof(InfrastructureInstallerExtensions))!;
-        var domainAssembly = Assembly.GetAssembly(typeof(IMessage))!;
 
         services
             .AddSingleton<IRepository<TrafficLight>, InMemoryRepository<TrafficLight>>()
             .AddScopedEventStore()
             .AddMediatR(c => c
                 .RegisterServicesFromAssemblies(
-                    infrastructureAssembly,
-                    domainAssembly
+                    infrastructureAssembly
                 )
             )
             .AddMetricsInstrumentation();

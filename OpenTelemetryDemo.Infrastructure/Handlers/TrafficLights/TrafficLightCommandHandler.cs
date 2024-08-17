@@ -3,7 +3,7 @@ using OpenTelemetryDemo.Domain.TrafficLights.Commands;
 using OpenTelemetryDemo.Domain.TrafficLights.Events;
 using OpenTelemetryDemo.Domain.TrafficLights.Models;
 
-namespace OpenTelemetryDemo.Domain.TrafficLights;
+namespace OpenTelemetryDemo.Infrastructure.Handlers.TrafficLights;
 
 public class TrafficLightCommandHandler :
     ICommandHandler<AddTrafficLight>,
