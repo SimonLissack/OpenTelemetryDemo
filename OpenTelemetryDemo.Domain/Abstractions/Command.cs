@@ -1,14 +1,4 @@
-﻿using MediatR;
-
-namespace OpenTelemetryDemo.Domain.Abstractions;
-
-public interface ICommand : IRequest
-{
-    public Guid Id { get; set; }
-    public Guid CausationId { get; set; }
-    public string RaisedBy { get; set; }
-    public DateTime RaisedAt { get; set; }
-}
+﻿namespace OpenTelemetryDemo.Domain.Abstractions;
 
 public abstract class Command : ICommand
 {
