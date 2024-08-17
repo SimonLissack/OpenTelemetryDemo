@@ -43,7 +43,8 @@ public static class InfrastructureInstallerExtensions
     {
         services
             .AddMetrics()
-            .AddSingleton<MessagingMetrics>();
+            .AddSingleton<MessagingMetrics>()
+            .AddSingleton<TrafficMetrics>();
 
         return services;
     }
