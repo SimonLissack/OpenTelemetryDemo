@@ -1,12 +1,13 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using OpenTelemetryDemo.Domain.Abstractions;
 using OpenTelemetryDemo.Domain.TrafficLights.Commands;
 using OpenTelemetryDemo.Domain.TrafficLights.Models;
 
 namespace OpenTelemetryDemo.Infrastructure.Services;
 
-public class JunctionWorkerService(IServiceScopeFactory scopeFactory) : BackgroundService
+public class JunctionWorkerService(ILogger<JunctionWorkerService> logger, IServiceScopeFactory scopeFactory) : BackgroundService
 {
     readonly TimeSpan _tickInterval = TimeSpan.FromSeconds(1);
     readonly Random _random = new();
@@ -18,6 +19,8 @@ public class JunctionWorkerService(IServiceScopeFactory scopeFactory) : Backgrou
     {
         var state = await CreateJunction(stoppingToken);
 
+        logger.LogInformation("Starting junction {Name}", Name);
+
         while (!stoppingToken.IsCancellationRequested)
         {
             foreach (var trafficLight in state.GetTrafficLights())
@@ -25,6 +28,7 @@ public class JunctionWorkerService(IServiceScopeFactory scopeFactory) : Backgrou
                 await using var lightTransitionScope = scopeFactory.CreateAsyncScope();
                 var commandDispatcher = lightTransitionScope.ServiceProvider.GetRequiredService<ICommandDispatcher>();
 
+                logger.LogDebug("Starting green phase for {Name}", trafficLight.Name);
                 await commandDispatcher.DispatchAsync(
                     new RequestTransition
                     {
@@ -33,6 +37,7 @@ public class JunctionWorkerService(IServiceScopeFactory scopeFactory) : Backgrou
                     },
                     stoppingToken
                 );
+
 
                 for (var i = 0; i < GreenLightTicks; i++)
                 {
@@ -56,8 +61,11 @@ public class JunctionWorkerService(IServiceScopeFactory scopeFactory) : Backgrou
                     },
                     stoppingToken
                 );
+                logger.LogDebug("Green phase completed for {Name}", trafficLight.Name);
             }
         }
+
+        logger.LogInformation("Stopping junction {Name}", Name);
     }
 
     async Task<JunctionState> CreateJunction(CancellationToken cancellationToken)

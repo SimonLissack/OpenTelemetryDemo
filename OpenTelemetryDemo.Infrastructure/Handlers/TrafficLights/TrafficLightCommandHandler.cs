@@ -1,36 +1,28 @@
-﻿using OpenTelemetryDemo.Domain.Abstractions;
+﻿using Microsoft.Extensions.Logging;
+using OpenTelemetryDemo.Domain.Abstractions;
 using OpenTelemetryDemo.Domain.TrafficLights.Commands;
 using OpenTelemetryDemo.Domain.TrafficLights.Events;
 using OpenTelemetryDemo.Domain.TrafficLights.Models;
 
 namespace OpenTelemetryDemo.Infrastructure.Handlers.TrafficLights;
 
-public class TrafficLightCommandHandler :
+public class TrafficLightCommandHandler(ILogger<TrafficLightCommandHandler> logger, IRepository<TrafficLight> repository, IEventDispatcher eventDispatcher) :
     ICommandHandler<AddTrafficLight>,
     ICommandHandler<RemoveTrafficLight>,
     ICommandHandler<RequestTransition>,
     ICommandHandler<AddArrivingTraffic>,
     ICommandHandler<RemoveLeavingTraffic>
 {
-    readonly IRepository<TrafficLight> _repository;
-    readonly IEventDispatcher _eventDispatcher;
-
-    public TrafficLightCommandHandler(IRepository<TrafficLight> repository, IEventDispatcher eventDispatcher)
-    {
-        _repository = repository;
-        _eventDispatcher = eventDispatcher;
-    }
-
     public async Task Handle(AddTrafficLight command, CancellationToken cancellationToken)
     {
-        var existingTrafficLight = await _repository.FindAsync(command.TrafficLightName, cancellationToken);
+        var existingTrafficLight = await repository.FindAsync(command.TrafficLightName, cancellationToken);
 
         if (existingTrafficLight is not null)
         {
             throw new TrafficLightAlreadyExistsException(command.TrafficLightName);
         }
 
-        await _eventDispatcher.DispatchAsync(new TrafficLightAdded
+        await eventDispatcher.DispatchAsync(new TrafficLightAdded
         {
             TrafficLightName = command.TrafficLightName
         }, cancellationToken);
@@ -38,11 +30,11 @@ public class TrafficLightCommandHandler :
 
     public async Task Handle(RemoveTrafficLight command, CancellationToken cancellationToken)
     {
-        var existingTrafficLight = await _repository.FindAsync(command.TrafficLightName, cancellationToken);
+        var existingTrafficLight = await repository.FindAsync(command.TrafficLightName, cancellationToken);
 
         if (existingTrafficLight is not null)
         {
-            await _eventDispatcher.DispatchAsync(new TrafficLightRemoved
+            await eventDispatcher.DispatchAsync(new TrafficLightRemoved
             {
                 TrafficLightName = command.TrafficLightName
             }, cancellationToken);
@@ -58,7 +50,7 @@ public class TrafficLightCommandHandler :
             return;
         }
 
-        await _eventDispatcher.DispatchAsync(new TrafficLightTransitioned
+        await eventDispatcher.DispatchAsync(new TrafficLightTransitioned
         {
             TrafficLightName = command.TrafficLightName,
             TrafficLightState = command.RequestedLightState
@@ -76,7 +68,7 @@ public class TrafficLightCommandHandler :
 
         var trafficCount = trafficLight.QueuedTraffic + command.TrafficArrived;
 
-        await _eventDispatcher.DispatchAsync(new TrafficLightQueuedTrafficChanged
+        await eventDispatcher.DispatchAsync(new TrafficLightQueuedTrafficChanged
         {
             TrafficLightName = command.TrafficLightName,
             NewTrafficCount = trafficCount
@@ -99,7 +91,7 @@ public class TrafficLightCommandHandler :
             ? 0
             : trafficCount;
 
-        await _eventDispatcher.DispatchAsync(new TrafficLightQueuedTrafficChanged
+        await eventDispatcher.DispatchAsync(new TrafficLightQueuedTrafficChanged
         {
             TrafficLightName = command.TrafficLightName,
             NewTrafficCount = trafficCount
@@ -109,7 +101,7 @@ public class TrafficLightCommandHandler :
 
     async Task<TrafficLight> GetTrafficLight(string trafficLightName, CancellationToken cancellationToken)
     {
-        var trafficLight = await _repository.FindAsync(trafficLightName, cancellationToken);
+        var trafficLight = await repository.FindAsync(trafficLightName, cancellationToken);
 
         if (trafficLight is null)
         {

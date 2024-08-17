@@ -1,15 +1,18 @@
 ﻿using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
+using Microsoft.Extensions.Logging;
 using OpenTelemetryDemo.Domain.Abstractions;
 
 namespace OpenTelemetryDemo.Infrastructure.Services.InMemory;
 
-public class InMemoryRepository<T> : IRepository<T> where T : class
+public class InMemoryRepository<T>(ILogger<InMemoryRepository<T>> logger) : IRepository<T> where T : class
 {
     readonly ConcurrentDictionary<string, T> _repository = new();
 
     public Task<T?> FindAsync(string name, CancellationToken cancellationToken)
     {
+        logger.LogDebug("Finding {Name}", name);
+
         return _repository.TryGetValue(name, out var value)
             ? Task.FromResult<T?>(value)
             : Task.FromResult<T?>(default);
@@ -17,6 +20,7 @@ public class InMemoryRepository<T> : IRepository<T> where T : class
 
     public Task AddOrUpdateAsync(string name, T value, CancellationToken cancellationToken)
     {
+        logger.LogDebug("Adding {Name}", name);
         _repository.AddOrUpdate(name, _ => value, (_,_) => value);
 
         return Task.CompletedTask;
@@ -24,12 +28,14 @@ public class InMemoryRepository<T> : IRepository<T> where T : class
 
     public Task RemoveAsync(string name, CancellationToken cancellationToken)
     {
+        logger.LogDebug("Removing {Name}", name);
         _repository.TryRemove(name, out _);
         return Task.CompletedTask;
     }
 
     public async IAsyncEnumerable<T> GetAllAsync([EnumeratorCancellation] CancellationToken cancellationToken)
     {
+        logger.LogInformation("Getting all items in repository");
         foreach (var value in _repository.Values)
         {
             if (cancellationToken.IsCancellationRequested)
