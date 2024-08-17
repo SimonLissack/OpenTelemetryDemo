@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTelemetryDemo.Console",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTelemetryDemo.Domain", "OpenTelemetryDemo.Domain\OpenTelemetryDemo.Domain.csproj", "{D24C09C6-BC65-4458-BFA2-CE9A2237D350}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTelemetryDemo.Infrastructure", "OpenTelemetryDemo.Infrastructure\OpenTelemetryDemo.Infrastructure.csproj", "{34ADB1BB-C527-45DB-9D33-BB29709268BD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{D24C09C6-BC65-4458-BFA2-CE9A2237D350}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D24C09C6-BC65-4458-BFA2-CE9A2237D350}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D24C09C6-BC65-4458-BFA2-CE9A2237D350}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34ADB1BB-C527-45DB-9D33-BB29709268BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34ADB1BB-C527-45DB-9D33-BB29709268BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34ADB1BB-C527-45DB-9D33-BB29709268BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34ADB1BB-C527-45DB-9D33-BB29709268BD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
