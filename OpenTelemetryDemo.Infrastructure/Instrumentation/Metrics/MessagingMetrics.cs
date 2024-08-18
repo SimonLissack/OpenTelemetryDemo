@@ -21,10 +21,10 @@ public class MessagingMetrics
     }
 
     public void CommandDispatched<T>() where T : ICommand => _commandsDispatched.Add(1, tags: [
-        new("command_name", typeof(T).Name)
+        new(TelemetryDefaults.TagNames.CommandName, typeof(T).Name)
     ]);
 
     public void EventDispatched<T>() where T : IEvent => _eventsDispatched.Add(1, tags: [
-        new("event_name", typeof(T).Name)
+        new(TelemetryDefaults.TagNames.EventName, typeof(T).Name)
     ]);
 }

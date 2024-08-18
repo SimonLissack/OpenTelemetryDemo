@@ -10,7 +10,7 @@ public class Tracing(CausationTracker causationTracker)
     public Activity? StartActivity(string name)
     {
         var activity = ActivitySource.StartActivity(name);
-        activity?.AddTag(TelemetryDefaults.TagNames.CorrelationId, causationTracker.CorrelationId);
+        activity?.SetTag(TelemetryDefaults.TagNames.CorrelationId, causationTracker.CorrelationId);
 
         return activity;
     }
