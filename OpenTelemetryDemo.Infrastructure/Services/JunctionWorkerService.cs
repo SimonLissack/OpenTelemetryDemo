@@ -1,13 +1,15 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Diagnostics;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OpenTelemetryDemo.Domain.Abstractions;
 using OpenTelemetryDemo.Domain.TrafficLights.Commands;
 using OpenTelemetryDemo.Domain.TrafficLights.Models;
+using OpenTelemetryDemo.Infrastructure.Instrumentation.Tracing;
 
 namespace OpenTelemetryDemo.Infrastructure.Services;
 
-public class JunctionWorkerService(ILogger<JunctionWorkerService> logger, IServiceScopeFactory scopeFactory) : BackgroundService
+public class JunctionWorkerService(ILogger<JunctionWorkerService> logger, Tracing tracing, IServiceScopeFactory scopeFactory) : BackgroundService
 {
     readonly TimeSpan _tickInterval = TimeSpan.FromSeconds(1);
     readonly Random _random = new();
@@ -25,10 +27,16 @@ public class JunctionWorkerService(ILogger<JunctionWorkerService> logger, IServi
         {
             foreach (var trafficLight in state.GetTrafficLights())
             {
+                using var activity = tracing.StartActivity("JunctionLightPhase");
+
+                activity?.AddTag("traffic_light_name", trafficLight.Name);
+
                 await using var lightTransitionScope = scopeFactory.CreateAsyncScope();
                 var commandDispatcher = lightTransitionScope.ServiceProvider.GetRequiredService<ICommandDispatcher>();
 
                 logger.LogDebug("Starting green phase for {Name}", trafficLight.Name);
+
+                activity?.AddEvent(new ActivityEvent("Setting light to green"));
                 await commandDispatcher.DispatchAsync(
                     new RequestTransition
                     {
@@ -41,6 +49,7 @@ public class JunctionWorkerService(ILogger<JunctionWorkerService> logger, IServi
 
                 for (var i = 0; i < GreenLightTicks; i++)
                 {
+                    activity?.AddEvent(new ActivityEvent($"Tick {i}/{GreenLightTicks}"));
                     await commandDispatcher.DispatchAsync(
                         new RemoveLeavingTraffic
                         {
@@ -53,6 +62,7 @@ public class JunctionWorkerService(ILogger<JunctionWorkerService> logger, IServi
                     await Tick(state, stoppingToken);
                 }
 
+                activity?.AddEvent(new ActivityEvent("Setting traffic light to Red"));
                 await commandDispatcher.DispatchAsync(
                     new RequestTransition
                     {

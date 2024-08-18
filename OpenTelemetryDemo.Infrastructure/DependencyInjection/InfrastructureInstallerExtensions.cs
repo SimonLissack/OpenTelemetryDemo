@@ -1,9 +1,14 @@
 ﻿using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Diagnostics.Metrics;
+using OpenTelemetry;
+using OpenTelemetry.Exporter;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using OpenTelemetryDemo.Domain.Abstractions;
 using OpenTelemetryDemo.Domain.TrafficLights.Models;
+using OpenTelemetryDemo.Infrastructure.Instrumentation;
 using OpenTelemetryDemo.Infrastructure.Instrumentation.Metrics;
+using OpenTelemetryDemo.Infrastructure.Instrumentation.Tracing;
 using OpenTelemetryDemo.Infrastructure.Services;
 using OpenTelemetryDemo.Infrastructure.Services.InMemory;
 
@@ -23,6 +28,7 @@ public static class InfrastructureInstallerExtensions
                     infrastructureAssembly
                 )
             )
+            .AddOpenTelemetryInstrumentation()
             .AddMetricsInstrumentation();
 
         return services;
@@ -38,6 +44,21 @@ public static class InfrastructureInstallerExtensions
         return services;
     }
 
+    static IServiceCollection AddOpenTelemetryInstrumentation(this IServiceCollection services)
+    {
+        services.AddOpenTelemetry()
+            .ConfigureResource(c => c
+                .AddService(TelemetryDefaults.RootMetricName)
+                .AddTelemetrySdk()
+                .AddAttributes([
+                    TelemetryDefaults.Tags.MachineName
+                ])
+            )
+            .AddTracingInstrumentation();
+
+        return services;
+    }
+
     static IServiceCollection AddMetricsInstrumentation(this IServiceCollection services)
     {
         services
@@ -46,5 +67,19 @@ public static class InfrastructureInstallerExtensions
             .AddSingleton<TrafficMetrics>();
 
         return services;
+    }
+
+    static OpenTelemetryBuilder AddTracingInstrumentation(this OpenTelemetryBuilder openTelemetryBuilder)
+    {
+        openTelemetryBuilder.Services
+            .AddSingleton<Tracing>();
+
+        openTelemetryBuilder
+            .WithTracing(c => c
+                .AddSource(TelemetryDefaults.RootName)
+                .AddConsoleExporter(ce => ce.Targets = ConsoleExporterOutputTargets.Console)
+            );
+
+        return openTelemetryBuilder;
     }
 }

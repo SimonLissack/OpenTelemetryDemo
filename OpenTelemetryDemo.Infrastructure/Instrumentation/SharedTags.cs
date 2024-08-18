@@ -1,13 +1,18 @@
 ﻿namespace OpenTelemetryDemo.Infrastructure.Instrumentation;
 
-public static class MetricsDefaults
+public static class TelemetryDefaults
 {
     public const string RootName = "OpenTelemetryDemo";
     public const string RootMetricName = "otel_demo";
 
     public static class Tags
     {
-        public static readonly KeyValuePair<string, object?> MachineName = new ("machine_name", Environment.MachineName);
+        public static readonly KeyValuePair<string, object?> MachineName = new (TagNames.MachineName, Environment.MachineName);
+    }
 
+    public static class TagNames
+    {
+        public const string MachineName = "machine_name";
+        public const string CorrelationId = "correlation_id";
     }
 }
