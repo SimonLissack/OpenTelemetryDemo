@@ -8,7 +8,7 @@ public class MessagingMetrics
 {
     public const string MeterName = $"{TelemetryDefaults.RootName}.Messaging";
 
-    const string MetricPrefix = $"{TelemetryDefaults.RootMetricName}.Messaging";
+    const string MetricPrefix = $"{TelemetryDefaults.RootMetricName}.messaging";
 
     readonly Counter<int> _commandsDispatched;
     readonly Counter<int> _eventsDispatched;
