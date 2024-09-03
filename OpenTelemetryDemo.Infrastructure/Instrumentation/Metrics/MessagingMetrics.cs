@@ -6,6 +6,8 @@ namespace OpenTelemetryDemo.Infrastructure.Instrumentation.Metrics;
 
 public class MessagingMetrics
 {
+    public const string MeterName = $"{TelemetryDefaults.RootName}.Messaging";
+
     const string MetricPrefix = $"{TelemetryDefaults.RootMetricName}.Messaging";
 
     readonly Counter<int> _commandsDispatched;
@@ -13,7 +15,7 @@ public class MessagingMetrics
 
     public MessagingMetrics(IMeterFactory meterFactory)
     {
-        var meter = meterFactory.Create($"{TelemetryDefaults.RootName}.Messaging", tags: [
+        var meter = meterFactory.Create(MeterName, tags: [
             TelemetryDefaults.Tags.MachineName
         ]);
         _commandsDispatched = meter.CreateCounter<int>($"{MetricPrefix}.commands_dispatched");

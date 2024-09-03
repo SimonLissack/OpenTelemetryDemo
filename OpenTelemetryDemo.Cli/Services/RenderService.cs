@@ -30,6 +30,5 @@ public class RenderService(IRepository<TrafficLight> repository) : BackgroundSer
             Console.WriteLine($"  State: {trafficLight.LightState}");
             Console.WriteLine($"  Queue: {trafficLight.QueuedTraffic}");
         }
-
     }
 }

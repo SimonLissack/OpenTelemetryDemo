@@ -7,12 +7,14 @@ namespace OpenTelemetryDemo.Infrastructure.Instrumentation.Metrics;
 
 public class TrafficMetrics
 {
+    public const string MeterName = $"{TelemetryDefaults.RootName}.Traffic";
+
     readonly Histogram<int> _queuedTraffic;
     const string MetricPrefix = $"{TelemetryDefaults.RootMetricName}.traffic";
 
     public TrafficMetrics(IMeterFactory meterFactory)
     {
-        var meter = meterFactory.Create($"{TelemetryDefaults.RootName}.Traffic", tags: [
+        var meter = meterFactory.Create(MeterName, tags: [
             TelemetryDefaults.Tags.MachineName
         ]);
 

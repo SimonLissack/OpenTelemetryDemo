@@ -1,9 +1,7 @@
 ﻿using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry;
-using OpenTelemetry.Exporter;
 using OpenTelemetry.Resources;
-using OpenTelemetry.Trace;
 using OpenTelemetryDemo.Domain.Abstractions;
 using OpenTelemetryDemo.Domain.TrafficLights.Models;
 using OpenTelemetryDemo.Infrastructure.Instrumentation;
@@ -28,8 +26,7 @@ public static class InfrastructureInstallerExtensions
                     infrastructureAssembly
                 )
             )
-            .AddOpenTelemetryInstrumentation()
-            .AddMetricsInstrumentation();
+            .AddOpenTelemetryInstrumentation();
 
         return services;
     }
@@ -48,36 +45,52 @@ public static class InfrastructureInstallerExtensions
     {
         services.AddOpenTelemetry()
             .ConfigureResource(c => c
-                .AddService(TelemetryDefaults.RootMetricName)
+                .AddEnvironmentVariableDetector()
                 .AddTelemetrySdk()
                 .AddAttributes([
                     TelemetryDefaults.Tags.MachineName
                 ])
             )
-            .AddTracingInstrumentation();
+            .UseOtlpExporter()
+            .AddLoggingInstrumentation()
+            .AddTracingInstrumentation()
+            .AddMetricsInstrumentation();
 
         return services;
     }
 
-    static IServiceCollection AddMetricsInstrumentation(this IServiceCollection services)
+    static IOpenTelemetryBuilder AddLoggingInstrumentation(this IOpenTelemetryBuilder openTelemetryBuilder)
     {
-        services
+        openTelemetryBuilder
+            .WithLogging();
+
+        return openTelemetryBuilder;
+    }
+
+    static IOpenTelemetryBuilder AddMetricsInstrumentation(this IOpenTelemetryBuilder openTelemetryBuilder)
+    {
+        openTelemetryBuilder.Services
             .AddMetrics()
             .AddSingleton<MessagingMetrics>()
             .AddSingleton<TrafficMetrics>();
 
-        return services;
+        openTelemetryBuilder
+            .WithMetrics(b => b
+                .AddMeter(MessagingMetrics.MeterName)
+                .AddMeter(TrafficMetrics.MeterName)
+            );
+
+        return openTelemetryBuilder;
     }
 
-    static OpenTelemetryBuilder AddTracingInstrumentation(this OpenTelemetryBuilder openTelemetryBuilder)
+    static IOpenTelemetryBuilder AddTracingInstrumentation(this IOpenTelemetryBuilder openTelemetryBuilder)
     {
         openTelemetryBuilder.Services
             .AddSingleton<Tracing>();
 
         openTelemetryBuilder
-            .WithTracing(c => c
+            .WithTracing(b => b
                 .AddSource(TelemetryDefaults.RootName)
-                .AddConsoleExporter(ce => ce.Targets = ConsoleExporterOutputTargets.Console)
             );
 
         return openTelemetryBuilder;
