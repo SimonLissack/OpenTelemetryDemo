@@ -50,6 +50,6 @@ public class TrafficLightEventHandler(ILogger<TrafficLightEventHandler> logger, 
 
         await repository.AddOrUpdateAsync(@event.TrafficLightName, trafficLight, cancellationToken);
 
-        trafficMetrics.UpdateQueuedTraffic(trafficLight.Name, trafficLight.QueuedTraffic, trafficLight.LightState);
+        trafficMetrics.SetQueueDepth(trafficLight.Name, trafficLight.QueuedTraffic);
     }
 }

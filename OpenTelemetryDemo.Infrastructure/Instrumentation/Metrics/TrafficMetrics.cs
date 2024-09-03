@@ -1,6 +1,4 @@
 ﻿using System.Diagnostics.Metrics;
-using OpenTelemetryDemo.Domain.TrafficLights.Models;
-
 // ReSharper disable ArrangeObjectCreationWhenTypeNotEvident
 
 namespace OpenTelemetryDemo.Infrastructure.Instrumentation.Metrics;
@@ -9,23 +7,30 @@ public class TrafficMetrics
 {
     public const string MeterName = $"{TelemetryDefaults.RootName}.Traffic";
 
-    readonly Histogram<int> _queuedTraffic;
+    readonly Dictionary<string, int> _queueDepthGauges = new();
+    readonly Meter _meter;
     const string MetricPrefix = $"{TelemetryDefaults.RootMetricName}.traffic";
 
     public TrafficMetrics(IMeterFactory meterFactory)
     {
-        var meter = meterFactory.Create(MeterName, tags: [
+        _meter = meterFactory.Create(MeterName, tags: [
             TelemetryDefaults.Tags.MachineName
         ]);
-
-        _queuedTraffic = meter.CreateHistogram<int>($"{MetricPrefix}.queue_depth");
     }
 
-    public void UpdateQueuedTraffic(string trafficLightName, int queue, TrafficLightState trafficLightState)
+    public void SetQueueDepth(string trafficLightName, int size)
     {
-        _queuedTraffic.Record(queue, tags: [
-            new("traffic_light", trafficLightName),
-            new("light_state", trafficLightState.ToString())
-        ]);
+        var alreadyExists = _queueDepthGauges.ContainsKey(trafficLightName);
+        _queueDepthGauges[trafficLightName] = size;
+
+        if (!alreadyExists)
+        {
+            _meter.CreateObservableGauge($"{MetricPrefix}.queue_depth", () => new Measurement<int>(
+                _queueDepthGauges[trafficLightName],
+                tags: [
+                    new("traffic_light", trafficLightName)
+                ]
+            ));
+        }
     }
 }
