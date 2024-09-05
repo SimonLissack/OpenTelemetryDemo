@@ -18,6 +18,7 @@ public class RenderService(IRepository<TrafficLight> repository) : BackgroundSer
 
     async Task Render(CancellationToken cancellationToken)
     {
+        var baseColor = Console.ForegroundColor;
         Console.Clear();
 
         Console.WriteLine($"Process id: {Environment.ProcessId}");
@@ -27,7 +28,11 @@ public class RenderService(IRepository<TrafficLight> repository) : BackgroundSer
             cancellationToken.ThrowIfCancellationRequested();
             Console.WriteLine($"{trafficLight.Name}:");
             Console.WriteLine($"  Last transition: {trafficLight.LastTransition:u}");
-            Console.WriteLine($"  State: {trafficLight.LightState}");
+            Console.Write("  State: ");
+            var lightColor = trafficLight.LightState == TrafficLightState.Green ? ConsoleColor.Green : ConsoleColor.Red;
+            Console.ForegroundColor = lightColor;
+            Console.WriteLine(trafficLight.LightState);
+            Console.ForegroundColor = baseColor;
             Console.WriteLine($"  Queue: {trafficLight.QueuedTraffic}");
         }
     }
